@@ -1,0 +1,5 @@
+*.html linguist-detectable=false
+README.md linguist-detectable=false
+docs/* linguist-detectable=false
+*.sql linguist-detectable=true
+*.sql linguist-language=SQL
