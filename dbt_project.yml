@@ -12,10 +12,11 @@ profile: 'AIRBNB_DBT'
 # found in the "models/" directory. You probably won't need to change these!
 model-paths: ["models"]
 analysis-paths: ["analyses"]
-test-paths: ["tests"]
+test-paths: ["data_tests"]
 seed-paths: ["seeds"]
 macro-paths: ["macros"]
 snapshot-paths: ["snapshots"]
+asset-paths: ["assets"]
 
 clean-targets:         # directories to be removed by `dbt clean`
   - "target"
@@ -31,7 +32,7 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   AIRBNB_DBT:
     +materialized: view  #makes this as a default materialization
-    dim:
-      +materialized: view
+    +post-hook:
+      - "GRANT SELECT ON {{ this }} to ROLE REPORTER" 
     src:
       +materialized: ephemeral
