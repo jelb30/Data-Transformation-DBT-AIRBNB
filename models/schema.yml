@@ -20,17 +20,15 @@ models:
         data_tests:
           - accepted_values:
               values:
-                - Entire home/apt
-                - Private room
-                - Shared room
-                - Hotel room
-        data_tests:
-          - positive_value
+                - "Entire home/apt"
+                - "Private room"
+                - "Shared room"
+                - "Hotel room"
+
       - name: minimum_nights
         description: '{{ doc("dim_listing_cleansed__minimum_nights") }}'
         data_tests:
           - positive_value
-        quote: true
 
   - name: dim_hosts_cleansed
     description: Cleansed table for the Airbnb hosts
@@ -61,6 +59,9 @@ models:
     columns:
       - name: price
         data_tests:
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: number
+
           - dbt_expectations.expect_column_quantile_values_to_be_between:
               quantile: .99
               min_value: 50
