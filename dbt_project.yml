@@ -36,3 +36,6 @@ models:
       - "GRANT SELECT ON {{ this }} to ROLE REPORTER" 
     src:
       +materialized: ephemeral
+
+vars:
+  user_name: DEFAULT_USERNAME
