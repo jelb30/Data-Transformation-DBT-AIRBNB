@@ -1,23 +1,77 @@
 version: 2
 models:
   - name: dim_listings_cleansed
+    description: Transformed version of the raw lisitings, clearned null values and applied some generic tests in the raw listings.
     columns:
-    - name: listing_id
-      tests:
-        - unique
-        - not_null
+      - name: listing_id
+        data_tests:
+          - not_null
+          - unique
 
-    - name: host_id
-      tests: 
-        - not_null
-        - relationships:
-            to: ref('dim_hosts_cleaned')
-            field: host_id
+      - name: host_id
+        data_tests:
+          - not_null
+          - relationships:
+              field: host_id
+              to: ref('dim_hosts_cleansed')
 
-    - name: room_type
-      tests:
-        - accepted_values:
-            values: ['Entire home/apt',
-            'Private room',
-            'Shared room',
-            'Hotel room']
+      - name: room_type
+        description: '{{ doc("dim_listing_cleansed__roomtype") }}'
+        data_tests:
+          - accepted_values:
+              values:
+                - Entire home/apt
+                - Private room
+                - Shared room
+                - Hotel room
+        data_tests:
+          - positive_value
+      - name: minimum_nights
+        description: '{{ doc("dim_listing_cleansed__minimum_nights") }}'
+        data_tests:
+          - positive_value
+        quote: true
+
+  - name: dim_hosts_cleansed
+    description: Cleansed table for the Airbnb hosts
+    columns:
+      - name: host_id
+        description: The id of the host. This is the primary key.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: host_name
+        description: The name of the host
+        data_tests:
+          - not_null
+
+      - name: is_superhost
+        description: Defines whether the hosts is a superhost.
+        data_tests:
+          - accepted_values:
+              values: [ 't', 'f' ]
+
+  - name: dim_listings_with_hosts
+    description: It is merged dimension table od both listings and hosts table for better data understamding.
+    data_tests: 
+      - dbt_expectations.expect_table_row_count_to_equal_other_table:
+          compare_model: ref('src_listing')
+
+    columns:
+      - name: price
+        data_tests:
+          - dbt_expectations.expect_column_quantile_values_to_be_between:
+              quantile: .99
+              min_value: 50
+              max_value: 500
+              strictly: false # (Optional. Default is 'false'. Adds an 'or equal to' to the comparison operator for min/max)
+              
+          - dbt_expectations.expect_column_max_to_be_between:
+              max_value: 5000
+              config:
+                severity: warn
+
+  - name: src_listing
+    description: A view for usinig listings without touching the actual data table.
+    
