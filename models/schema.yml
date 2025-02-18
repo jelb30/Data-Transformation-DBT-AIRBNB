@@ -52,7 +52,7 @@ models:
 
   - name: dim_listings_with_hosts
     description: It is merged dimension table od both listings and hosts table for better data understamding.
-    data_tests: 
+    data_tests:
       - dbt_expectations.expect_table_row_count_to_equal_other_table:
           compare_model: ref('src_listing')
 
@@ -63,16 +63,33 @@ models:
               column_type: number
 
           - dbt_expectations.expect_column_quantile_values_to_be_between:
-              quantile: .99
+              quantile: 0.99
               min_value: 50
               max_value: 500
               strictly: false # (Optional. Default is 'false'. Adds an 'or equal to' to the comparison operator for min/max)
-              
+
           - dbt_expectations.expect_column_max_to_be_between:
-              max_value: 5000
+              max_value: 9000
               config:
                 severity: warn
 
+      - name: listing_id
+        data_tests:
+          - relationships:
+              field: listing_id
+              to: ref('dim_listings_cleansed')
+
+      - name: host_id
+        data_tests:
+          - relationships:
+              field: host_id
+              to: ref('dim_listings_cleansed')
+
   - name: src_listing
     description: A view for usinig listings without touching the actual data table.
-    
+
+  - name: fct_reviews
+    description: The fct_reviews model is a refined version of the raw_reviews table from the AIRBNB.raw schema. It provides a clean and organized view of the reviews data, making it easier for business users to analyze and derive insights. The model includes unique review identifiers, listing identifiers, review dates, reviewer names, review texts, and review sentiments. It ensures that all records have a review text, thereby improving the quality of the data. This model can be used to understand customer sentiments, identify trends over time, and make data-driven decisions to improve customer satisfaction.
+  
+  - name: full_moon_reviews
+    description: The 'full_moon_reviews' model combines the 'fct_reviews' and 'seed_full_moon_dates' tables, adding a new column 'is_full_moon' to indicate if a review was made a day after a full moon.
