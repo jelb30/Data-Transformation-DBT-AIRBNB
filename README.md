@@ -48,7 +48,7 @@ dbt docs serve
 ## Installation & Setup
 1. Clone this repository:
    ```sh
-   git clone https://github.com/your_username/airbnb_dbt.git
+   git clone https://github.com/jelb30/airbnb_dbt.git
    cd airbnb_dbt
    ```
 2. Install dbt (if not already installed):
