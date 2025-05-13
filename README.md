@@ -48,8 +48,8 @@ dbt docs serve
 ## Installation & Setup
 1. Clone this repository:
    ```sh
-   git clone https://github.com/jelb30/airbnb_dbt.git
-   cd airbnb_dbt
+   git clone https://github.com/jelb30/Data-Transformation-DBT-AIRBNB.git
+   cd Data-Transformation-DBT-AIRBNB
    ```
 2. Install dbt (if not already installed):
    ```sh
